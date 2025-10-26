@@ -46,6 +46,8 @@ ya pada akhirnya **Struktur Tidak Dieksploitasi** Sifat penting seperti urutan d
 ## Solusi
 Sebagai solusinya **discrete convolution** berperan untuk mempertahankan struktur intrinsik data (dimensi spasial dan urutan) dan memanfaatkannya saat memproses data.
 
+## 1.1 Discrete convolutions
+
 Cara penerapan dari Konvolusi diskrit adalah sebagai blok bangunan utama dalam Convolutional Neural Networks (CNNs), yang sangat efektif dalam tugas-tugas yang melibatkan data terstruktur seperti visi komputer dan pengenalan ucapan.
 
 Akhirnya, Dengan menggunakan konvolusi, jaringan dapat belajar pola lokal dan fitur spasial (misalnya, garis tepi atau sudut) dengan menerapkan kernel (filter) kecil yang bergerak melintasi dimensi spasial, sehingga menghormati topologi data.
@@ -67,3 +69,84 @@ Sifat ini sangat mengurangi jumlah parameter yang harus dipelajari oleh model, s
 
 wujud asli dari kernel, matriks bobot kecil yang disebut filter. Kernel inilah yang digeser (slide) ke seluruh peta fitur input untuk melakukan operasi perkalian dan penjumlahan, menghasilkan satu titik pada peta fitur output.
 ![discrete conv](../Asset/discreteConv.png)
+
+Kernel (atau filter) bergerak melintasi peta fitur input (input feature map). Pada setiap posisi, dilakukan perhitungan hasil kali antara setiap elemen kernel dengan elemen input yang tumpang tindih, kemudian hasil-hasil tersebut dijumlahkan untuk menghasilkan output pada posisi saat ini.
+Prosedur ini dapat diulangi dengan menggunakan berbagai kernel yang berbeda untuk membentuk sebanyak mungkin peta fitur output (output feature maps) yang diinginkan (lihat Gambar 1.3).
+Hasil akhir dari prosedur ini disebut output feature maps.
+
+Jika terdapat beberapa peta fitur input, maka kernel harus memiliki dimensi tiga (3D) — atau secara ekuivalen, setiap peta fitur input dikonvolusikan dengan kernel yang berbeda — dan hasil dari tiap konvolusi tersebut dijumlahkan secara elemen demi elemen (elementwise) untuk menghasilkan satu peta fitur output.
+
+Konvolusi yang digambarkan pada Gambar sebelumnya adalah contoh dari konvolusi dua dimensi (2D convolution), namun konsepnya dapat digeneralisasi menjadi konvolusi N-dimensi (N-D convolution).
+Sebagai contoh, dalam konvolusi 3D, kernel berbentuk kubus (cuboid) dan bergerak melintasi tinggi (height), lebar (width), serta kedalaman (depth) dari peta fitur input.
+
+Kumpulan kernel yang mendefinisikan konvolusi diskrit memiliki bentuk (shape) yang sesuai dengan suatu permutasi dari $(n, m, k_1, \ldots, k_N)$, di mana:
+
+
+1. $n$ = jumlah *output feature maps*
+
+Setiap *layer konvolusi* menghasilkan sejumlah *feature map* baru — sesuai dengan berapa banyak *kernel/filter* yang kita gunakan.
+
+Misalnya, kita menggunakan **32 filter**: maka layer tersebut menghasilkan **32 output feature maps**, jadi $n = 32$
+
+
+2. $m$ = jumlah *input feature maps*  
+
+Bayangkan kita memasukkan gambar RGB ke dalam CNN.  
+Gambar RGB memiliki 3 *channel*: **R** (Red), **G** (Green), **B** (Blue)
+
+Artinya jumlah *input feature map* adalah 3 (karena ada 3 *channel*). Jadi $m = 3$
+
+Jika lapisan sebelumnya menghasilkan 16 *feature maps*, maka: $m = 16$
+
+
+3. $k_j$ = ukuran kernel sepanjang sumbu ke-$j$
+
+$o_j$ yang digunakan untuk menentukan ukuran tiap feature map (tinggi × lebar). Dimana beberapa properti berikut memengaruhi ukuran output $o_j$ dari suatu lapisan konvolusi di sepanjang sumbu ke-$j$:
+
+$$
+o_j = \left\lfloor \frac{i_j + 2p_j - k_j}{s_j} \right\rfloor + 1
+$$
+
+- $o_j$ : ukuran *output* sepanjang sumbu ke-$j$ 
+- $i_j$ : ukuran *input* sepanjang sumbu ke-$j$  
+- $k_j$ : ukuran *kernel* sepanjang sumbu ke-$j$  
+- $s_j$ : *stride* (jarak antara dua posisi kernel yang berurutan) di sepanjang sumbu ke-$j$  
+- $p_j$ : *zero padding* (jumlah nol yang ditambahkan di awal dan akhir suatu sumbu) di sepanjang sumbu ke-$j$
+
+Sebagai contoh, Gambar 1.2 menunjukkan sebuah kernel 3 × 3 yang diterapkan pada input 5 × 5 dengan padding nol 1 × 1 dan stride 2 × 2.
+
+![OutputVal](../Asset/OutputValues.png)
+
+Perlu diperhatikan bahwa stride merupakan salah satu bentuk subsampling.
+Sebagai alternatif dari menganggapnya sebagai ukuran seberapa jauh kernel digeser, stride juga dapat dipandang sebagai ukuran seberapa banyak output yang dipertahankan.
+
+gambar ini menunjukkan bagaimana satu set filter (kernel) bekerja pada peta fitur input, menghasilkan peta fitur output
+<img src="../Asset/convolutionMapping.png" alt="convolution mapping from two input feature maps to three output" width="400">
+
+Sebuah proses konvolusi memetakan dua *input feature maps* menjadi tiga *output feature maps* menggunakan kumpulan kernel $w$ berukuran $3 \times 2 \times 3 \times 3$. Pada jalur kiri, *input feature map* pertama dikonvolusikan dengan kernel $w_{1,1}$ dan *input feature map* kedua dengan kernel $w_{1,2}$. Hasil dari kedua konvolusi tersebut dijumlahkan secara elemen demi elemen (*elementwise*) untuk membentuk *output feature map* pertama. Prosedur yang sama diulang untuk jalur tengah dan jalur kanan guna membentuk *output feature map* kedua dan ketiga, yang kemudian dikelompokkan bersama (*stacked*) untuk menghasilkan output akhir.
+
+Contohnya gini biar lebih jelas:
+![discrete conv](../Asset/Contoh-kernel-bekerja.png)
+
+
+
+
+Sebagai contoh, menggeser kernel dengan langkah dua (stride = 2) setara dengan menggeser kernel dengan langkah satu (stride =w 1), namun hanya mempertahankan elemen output bernomor ganjil (lihat Gambar 1.4).w
+
+### 1.2 Pooling
+Selain konvolusi diskrit itu sendiri, operasi pooling merupakan komponen penting lainnya dalam CNN (Convolutional Neural Networks).
+Pooling berfungsi untuk mengurangi ukuran peta fitur (feature maps) dengan menggunakan suatu fungsi untuk merangkum subregion (wilayah kecil), misalnya dengan mengambil nilai rata-rata (average pooling) atau nilai maksimum (max pooling).
+
+Pooling bekerja dengan cara menggeser sebuah jendela (window) di atas input, lalu mengumpankan isi jendela tersebut ke fungsi pooling.  
+Dalam beberapa hal, mekanisme pooling mirip dengan konvolusi diskrit, namun menggantikan kombinasi linear (dot product) yang dilakukan kernel dengan fungsi lain (seperti maksimum atau rata-rata).
+
+Gambar berikutnya bakalan menunjukkan contoh average pooling, abis itu bakal menunjukkan max pooling.
+
+Ini average pooling
+![AvgPool](../Asset/AvgPool.png)
+
+Ini Max pooling
+![AvgPool](../Asset/MaxPool.png)
+
+## Aritmetika Konvolusi (Convolution Arithmetic)
+Analisis hubungan antara berbagai properti lapisan konvolusi menjadi lebih mudah karena setiap sumbu (axis) bekerja secara independen — artinya, pemilihan ukuran kernel, stride, dan zero padding pada sumbu ke-$j$ hanya memengaruhi ukuran output pada sumbu tersebut, dan tidak berinteraksi dengan sumbu lain.
