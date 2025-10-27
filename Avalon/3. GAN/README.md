@@ -20,13 +20,18 @@ Untuk memahami konsep GAN secara intuitif, bayangkan sebuah permainan antara dua
 
 Generator adalah jaringan yang akan mengambil input berupa noise acak (z) dan mengubahnya menjadi data palsu/sintetis yang realistis dengan tujuannya yaitu adalah untuk menipu discriminator, enerator belajar dari kesalahan dengan backpropagation, sehingga lama-kelamaan bisa menghasilkan data palsu yang sangat mirip data asli.
 
-![Generator](../Asset/Generator.png)
 
+![Generator](../Asset/Generator.png)
 
 
 - **Discriminator (Si Ahli Forensik)**: Seorang ahli seni dan forensik yang bertugas memeriksa setiap karya seni dan menentukan apakah itu asli atau palsu.
 
+![Generator](../Asset/Diskriminator.png)
+
+Bisa dilihat kalau tugas utama si discriminator, mengecilkan probabilitas gambar palsu sebagai gambar asli. meskipun gambar (fake) semakin mirip dengan gambar aslinya 
+
 Prosesnya berjalan sebagai berikut:
+![Generator](../Asset/Overall.png)
 
 1. Pada awalnya, si pemalsu (`G`) menghasilkan lukisan yang buruk. Ahli forensik (`D`) dengan mudah mengidentifikasinya sebagai palsu.  
 2. Ahli forensik (`D`) terus belajar dari karya asli dan karya palsu yang ia lihat, membuatnya semakin pintar dalam mendeteksi ketidaksempurnaan sekecil apa pun.  
@@ -90,3 +95,65 @@ Pelatihan mencapai **Nash Equilibrium** ketika `G` menghasilkan data dengan dist
 $$
 D(x) = 0.5 \quad \text{untuk semua } x
 $$
+
+Mengapa tidak kita hitung per piksel? 
+
+Karena GAN ditujukan untuk membuat data baru, bukan mereplikasi data, di sini jika hasil data satu-banding-satu antara latih dengan hasil, hal itu berarti GAN justru belajar untuk membuat data yang sudah ada, yang diinginkan dari permainan min-max adalah sebuah fungsi yang dapat mengemulasikan distribusi data (i.e., distribusi data sama, tetapi tidak sama secara individu sampel datanya sendiri).
+
+### Apa yang menyebabkan ketidakstabilan dalam pelatihan GAN?
+
+#### Sulit mencapai Nash Equilibrium
+
+GAN melibatkan dua model  (generator dan discriminator) yang berinteraksi dalam bntuk permainan dua pemain yang tidak mau bekerjasama. Keduanya memperbarui parameternya masing-masing secara bersamaan dan independen yang mana membuat proses pelatihan mengalami osilasi dan seringkali tidak konvergen.
+
+![Generator](../Asset/osilasi-ekstrem.png)
+
+
+Ketika kedua model melakukan pembaruan dengan arah yang saling bertolak belakang, seperti pada contoh gambar di atas, hasilnya adalah perubahan parameter yang saling menarik satu sama lain, menciptakan osilasi ekstrem yang semakin memburuk seiring waktu.
+
+#### low dimensional supports
+Distribusi data nyata (Pr) dan distribusi data buatan dari generator (Pg) biasanya berada pada manifold berdimensi rendah dalam ruang dimensi tinggi. Ini membuat keduanya tidak tumpang tindih, sehingga discriminator dapat dengan mudah membedakan antara data nyata dan palsu, yang menghambat pembelajaran generator
+
+![Generator](../Asset/low-dimensional-supports.png)
+
+Manifold dengan dimensi yang kecil akan lebih mudah untuk tidak membuat overlap saat berada di  ruangan berdimensi tinggi
+
+#### Mode Collapse
+Mode collapse terjadi ketika generator menghasilkan output yang sangat mirip atau bahkan identik, meskipun menerima input noise yang berbeda. Dalam situasi ini, generator hanya berhasil mengecoh discriminator dengan satu atau sedikit jenis output, lalu terus-menerus menghasilkan jenis output itu saja.
+
+Penyebab:
+Tidak ada insentif yang cukup bagi generator untuk mengeksplorasi variasi data lainnya karena discriminator terlalu mudah dikecoh dengan satu jenis output tertentu.
+
+Ketika manifold Pg dan Pr tidak tumpang tindih, generator tidak mendapatkan feedback pembelajaran yang baik, sehingga terjebak pada solusi lokal.
+
+![Generator](../Asset/DCGAN.png)
+
+### mengubah loss function atau arsitektur GAN untuk memperbaiki hasil pelatihan
+
+Untuk memperbaiki hasil pelatihan GAN, kita bisa menggunakan [Wasserstein GAN (WGAN)](../3.%20GAN/WGAN.md)  yang menggunakan Earth Mover's Distance sebagai loss function:
+
+misalnya kita ada dua tumpukan tanah (Satu mewakili distribusi data asli dan Satu lagi mewakili distribusi data hasil generator), Earth Mover’s Distance mengukur “biaya minimum” untuk memindahkan tanah dari satu tumpukan agar bentuknya menjadi sama dengan tumpukan lainnya. Sehingga, Semakin kecil jaraknya, semakin mirip dua distribusi tersebut.
+
+![Generator](../Asset/EarthsMoveDistance.png)
+
+#### Lipschitz Continuity dan Stabilitas Training
+Agar Earth Mover’s Distance bisa dihitung dan tetap stabil,
+fungsi discriminator (yang pada WGAN disebut critic) harus Lipschitz continuous —
+artinya, gradiennya tidak boleh terlalu besar (dibatasi dalam suatu range tertentu). 
+
+Untuk menjamin hal ini, ada dua pendekatan utama:
+
+1. **Weight Clipping**
+Setelah setiap pembaruan bobot, semua bobot “dipotong” (clipped) agar tetap berada dalam rentang tertentu, misalnya [-0.01, 0.01]. Ini memastikan bahwa fungsi tetap “halus” dan gradien tidak meledak. Namun, terlalu keras melakukan clipping bisa membuat jaringan sulit belajar.
+
+2. **Gradient Penalty (WGAN-GP)**
+Pendekatan yang lebih efektif. karena alih-alih kita potong bobot-nya, kita tambahkan penalti pada loss jika gradien dari critic terlalu jauh dari nilai ideal (biasanya 1). Dengan demikian, critic tetap Lipschitz continuous tanpa menghambat kemampuan belajar.
+
+$$
+L = L_{\text{WGAN}} + \lambda \left( \| \nabla_{\hat{x}} D(\hat{x}) \|_2 - 1 \right)^2
+$$
+
+
+![Generator](../Asset/WGAN.PNG)
+
+
