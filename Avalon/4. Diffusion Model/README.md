@@ -2,13 +2,11 @@
 
 # Modul Pembelajaran: Teori di Balik Diffusion Model
 
-Selamat datang di modul pembelajaran konseptual mengenai Diffusion Model. Di sini, kita akan menyelami teori, matematika, dan intuisi yang membuat model ini mampu menghasilkan gambar yang luar biasa.
-
 ## 1. Intuisi Dasar: Merusak dan Memperbaiki
 
-Bayangkan Anda memiliki sebuah lukisan yang sangat jernih (ini adalah **data asli** kita, atau **x₀**).
+Bayangkan kita memiliki sebuah lukisan yang sangat jernih (ini adalah **data asli** kita, atau **x₀**).
 
-Sekarang, bayangkan Anda secara bertahap meneteskan tinta ke atas lukisan tersebut. Setiap tetes tinta membuat lukisan sedikit lebih kabur dan acak. Jika Anda melakukannya ratusan kali, lukisan asli tersebut pada akhirnya akan benar-benar tertutup oleh tinta dan terlihat seperti noda acak (**noise murni**).
+Sekarang, kita secara bertahap meneteskan tinta ke atas lukisan tersebut. Setiap tetes tinta membuat lukisan sedikit lebih kabur dan acak. Jika kita melakukannya ratusan kali, lukisan asli tersebut pada akhirnya akan benar-benar tertutup oleh tinta dan terlihat seperti noda acak (**noise murni**).
 
 Proses merusak ini kita sebut **Forward Process (Proses Maju)**. Proses ini mudah dilakukan dan tidak memerlukan "kecerdasan" apa pun.
 
@@ -29,7 +27,7 @@ Pada setiap langkah `t`, gambar `x_t` dihasilkan dari `x_{t-1}` dengan rumus:
 **x_t = sqrt(α_t) * x_{t-1} + sqrt(1 - α_t) * ε**
 
 - **x_{t-1}**: Gambar dari langkah sebelumnya.
-- **ε (epsilon)**: Noise acak dari distribusi Gaussian standar.
+- **ε (epsilon)**: Noise acak dari distribusi Gaussian stkitar.
 - **α_t (alpha)**: Sebuah parameter kecil yang mengontrol seberapa banyak noise yang ditambahkan. Nilai `α_t` ini ditentukan oleh sebuah jadwal (*schedule*), biasanya `α_t = 1 - β_t`, di mana `β_t` (beta) adalah varians noise yang kecil dan meningkat secara bertahap dari `t=1` hingga `t=T`.
 
 Kelebihan dari proses ini adalah kita tidak perlu melakukannya langkah per langkah. Kita bisa langsung melompat ke timestep `t` manapun dari gambar asli `x₀` menggunakan rumus:
@@ -64,7 +62,7 @@ Saat training:
 5.  Berikan `x_t` dan `t` ke model kita untuk mendapatkan prediksi noise: `ε_θ(x_t, t)`.
 6.  Hitung *loss*: `MSE(ε, ε_θ(x_t, t))`. Ini adalah selisih kuadrat antara noise asli yang kita tambahkan (`ε`) dan noise yang diprediksi oleh model (`ε_θ`).
 
-Dengan meminimalkan *loss* ini, model secara bertahap menjadi sangat pandai dalam mengenali dan "melihat" noise dalam sebuah gambar pada timestep manapun.
+Dengan meminimalkan *loss* ini, model secara bertahap menjadi sangat pkitai dalam mengenali dan "melihat" noise dalam sebuah gambar pada timestep manapun.
 
 ## 3. Arsitektur Model: Mengapa U-Net?
 
@@ -89,7 +87,7 @@ Model yang kita gunakan untuk memprediksi noise adalah **U-Net**. Arsitektur ini
     2.  Mulai dari `t = T` hingga `t = 1`:
         a. Berikan `x_t` dan `t` ke model untuk memprediksi noise `ε_θ`.
         b. Gunakan prediksi noise ini dalam rumus matematika *reverse process* untuk menghitung `x_{t-1}` yang sedikit lebih bersih.
-    3.  Setelah loop selesai, `x₀` yang dihasilkan adalah gambar baru Anda.
+    3.  Setelah loop selesai, `x₀` yang dihasilkan adalah gambar baru kita.
 
 ## 5. Kesimpulan
 
