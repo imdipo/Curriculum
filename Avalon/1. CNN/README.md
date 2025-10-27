@@ -128,10 +128,13 @@ Sebuah proses konvolusi memetakan dua *input feature maps* menjadi tiga *output 
 Contohnya gini biar lebih jelas:
 ![discrete conv](../Asset/Contoh-kernel-bekerja.png)
 
+Perlu dicatat bahwa stride merupakan bentuk dari subsampling.
+Sebagai alternatif dari melihat stride sebagai ukuran seberapa jauh kernel bergeser, stride juga dapat dianggap sebagai ukuran seberapa banyak bagian output yang dipertahankan.
 
+Sebagai contoh, menggeser kernel dengan lompatan dua (stride = 2) setara dengan menggeser kernel dengan lompatan satu (stride = 1) tetapi hanya mempertahankan elemen output bernomor ganjil (lihat Gambar 1.4).
 
+![stride](../Asset/Stride.png)
 
-Sebagai contoh, menggeser kernel dengan langkah dua (stride = 2) setara dengan menggeser kernel dengan langkah satu (stride =w 1), namun hanya mempertahankan elemen output bernomor ganjil (lihat Gambar 1.4).w
 
 ### 1.2 Pooling
 Selain konvolusi diskrit itu sendiri, operasi pooling merupakan komponen penting lainnya dalam CNN (Convolutional Neural Networks).
@@ -148,5 +151,110 @@ Ini average pooling
 Ini Max pooling
 ![AvgPool](../Asset/MaxPool.png)
 
-## Aritmetika Konvolusi (Convolution Arithmetic)
+## 2. Aritmetika Konvolusi (Convolution Arithmetic)
 Analisis hubungan antara berbagai properti lapisan konvolusi menjadi lebih mudah karena setiap sumbu (axis) bekerja secara independen — artinya, pemilihan ukuran kernel, stride, dan zero padding pada sumbu ke-$j$ hanya memengaruhi ukuran output pada sumbu tersebut, dan tidak berinteraksi dengan sumbu lain.
+
+## 2.1 Tanpa Zero Padding, dengan Stride = 1
+Kasus paling sederhana untuk dianalisis adalah ketika **kernel** melintasi setiap posisi input tanpa *padding* dan tanpa lompatan, yaitu ketika $s = 1$ dan $p = 0$. Gambar 2.1 menunjukkan contohnya untuk $i = 4$ dan $k = 3$. Salah satu cara untuk menentukan **ukuran output** dalam kasus ini adalah dengan menghitung jumlah posisi yang mungkin bagi kernel di atas input, misalnya pada sumbu lebar (*width*).
+
+Kernel mulai dari sisi paling kiri input, lalu bergeser satu langkah demi satu langkah hingga menyentuh sisi kanan. Ukuran output sama dengan jumlah langkah yang dilakukan ditambah satu — karena posisi awal kernel juga dihitung (lihat Gambar 2.8a). Logika yang sama berlaku untuk sumbu tinggi (*height*).  
+
+Secara formal, hubungan berikut dapat diturunkan:  
+
+**Hubungan 1**  
+Untuk sembarang $i$ dan $k$, serta $s = 1$ dan $p = 0$:  
+
+$$
+o = (i - k) + 1
+$$
+
+![contoh](../Asset/No-zero-padding,unit-strides.png)
+
+## 2.2 Zero Padding, dengan Stride = 1
+
+Untuk memperhitungkan *zero padding* (dengan tetap membatasi $s = 1$), mari kita lihat efeknya terhadap ukuran *input* efektif:  
+Padding sebesar $p$ di setiap sisi akan mengubah ukuran input efektif dari $i$ menjadi $i + 2p$.
+
+Dalam kasus umum, Hubungan 1 dapat digunakan kembali untuk menurunkan hubungan berikut:
+
+**Hubungan 2**  
+Untuk sembarang $i, k, p$, dan $s = 1$:
+
+$$
+o = (i - k) + 2p + 1
+$$
+
+![stride](../Asset/ZeroPadding,dengan-Stride1.png)
+Gambar 2.2 menunjukkan contoh untuk $i = 5$, $k = 4$, dan $p = 2$.
+
+Dalam praktiknya, terdapat dua jenis *zero padding* yang sering digunakan karena sifatnya yang berguna. Mari kita bahas keduanya.
+
+---
+
+### 2.2.1 Half (Same) Padding
+
+Kadang kita menginginkan agar ukuran *output* sama dengan ukuran *input* (yaitu $o = i$).  
+Kondisi ini bisa dicapai dengan memilih *padding* yang sesuai.
+
+**Hubungan 3**  
+Untuk sembarang $i$, dan jika $k$ adalah bilangan ganjil ($k = 2n + 1$, $n \in \mathbb{N}$),  
+dengan $s = 1$ dan $p = \lfloor k / 2 \rfloor = n$, maka:
+
+$$
+o = i + 2\lfloor k/2 \rfloor - (k - 1) = i + 2n - 2n = i
+$$
+
+Kondisi ini disebut **half padding** atau **same padding** (*padding setengah* atau *padding sama*).  
+![stride](../Asset/Half(same)padding.png)
+Gambar 2.3 menunjukkan contohnya untuk $i = 5$, $k = 3$, dan karenanya $p = 1$.
+
+---
+
+### 2.2.2 Full Padding
+
+Secara umum, konvolusi dengan kernel akan mengurangi ukuran *output* dibandingkan ukuran *input*.  
+Namun, dalam beberapa kasus, justru diperlukan *output* yang lebih besar dari *input*.  
+Hal ini dapat dicapai dengan menambahkan *zero padding* yang cukup besar.
+
+**Hubungan 4**  
+Untuk sembarang $i$ dan $k$, dengan $p = k - 1$ dan $s = 1$:
+
+$$
+o = i + 2(k - 1) - (k - 1) = i + (k - 1)
+$$
+![stride](../Asset/Full-Padding.png)
+
+Biasanya, konvolusi membuat output lebih kecil dari input, karena kernel tidak bisa lewat di luar batas gambar.
+Tapi dengan full padding, kita tambahkan nol di sekeliling input agar kernel bisa meliputi semua kemungkinan posisi, termasuk yang hanya menyentuh sebagian area input.
+
+
+🔍 **Intuisi singkat:**
+
+| Jenis Padding | Rumus Output | Efek |
+|----------------|---------------|-------|
+| Tanpa padding | $o = i - k + 1$ | Output mengecil |
+| Half / Same padding | $o = i$ | Output sama |
+| Full padding | $o = i + k - 1$ | Output membesar |
+
+## 2.3 No zero padding, non-unit strides
+Kasus:
+
+$p$ = 0 (tidak ber-padding) dan $s$ > 1 (stride lebih dari 1)
+
+Stride > 1 artinya kernel melompat beberapa piksel sekaligus saat bergerak.
+Jadi, tidak semua posisi input dikunjungi oleh kernel → hasilnya output jadi lebih kecil.
+$$
+o = \left\lfloor \frac{i - k}{s} \right\rfloor + 1
+$$
+Kenapa kita memakai floor (pembulatan kebawah)? 
+Karena kadang kernel tidak pas berhenti di ujung input. Kalau stride-nya besar, sisa beberapa piksel di ujung bisa tidak ter-cover.
+
+## 2.4 Zero padding, non-unit strides
+Kasus:
+
+$p$ > (ber-padding) dan $s$ > 1 (stride lebih dari 1)
+
+$$
+o = \left\lfloor \frac{i + 2p - k}{s} \right\rfloor + 1
+$$
+
