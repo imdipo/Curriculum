@@ -44,21 +44,17 @@ Ukuran input > ukuran output.
 
 ![AE](../Asset/AE.png)
 
-Encoder menghasilkan kode laten:
+- Encoder menghasilkan kode laten:
 $\mathbf{z} = g_{\phi}(\mathbf{x})$
 
-Decoder menghasilkan rekonstruksi:
+- Decoder menghasilkan rekonstruksi:
 $\mathbf{x}' = f_{\theta}(\mathbf{z}) = f_{\theta}(g_{\phi}(\mathbf{x}))$
 
 Tujuan pembelajaran adalah:
 $\mathbf{x}' \approx \mathbf{x}$
 Artinya, model ingin output mirip input — dengan cara menekan loss rekonstruksi.
 
-Ada berbagai metrik untuk mengukur perbedaan antara dua vektor (input dan output).
-
-Jika output menggunakan aktivasi sigmoid, bisa pakai cross entropy loss.
-
-Jika tidak, biasanya cukup Mean Squared Error (MSE):
+Ada berbagai metrik untuk mengukur perbedaan antara dua vektor (input dan output). Jika output menggunakan aktivasi sigmoid, bisa pakai cross entropy loss.kalau tidak, biasanya cukup Mean Squared Error (MSE):
 
 $$
 LAE(\theta, \phi) = \sum_{i=1}^{n} \left( x^{(i)} - f_\theta \big( g_\phi(x^{(i)}) \big) \right)^2

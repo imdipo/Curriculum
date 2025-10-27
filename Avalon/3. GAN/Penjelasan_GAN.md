@@ -16,7 +16,14 @@ Tujuan akhirnya adalah melatih *Generator* hingga mampu menghasilkan data artifi
 
 Untuk memahami konsep GAN secara intuitif, bayangkan sebuah permainan antara dua pihak:
 
-- **Generator (Si Pemalsu)**: Seorang pemalsu yang sangat berbakat yang mencoba membuat karya seni palsu (misalnya, lukisan *Monalisa* palsu). Tujuannya adalah membuat karya yang begitu sempurna sehingga tidak ada yang bisa membedakannya dari yang asli.  
+- **Generator (Si Pemalsu)**: Seorang pemalsu yang sangat berbakat yang mencoba membuat karya seni palsu (misalnya, lukisan *Monalisa* palsu). Tujuannya adalah membuat karya yang begitu sempurna sehingga tidak ada yang bisa membedakannya dari yang asli.
+
+Generator adalah jaringan yang akan mengambil input berupa noise acak (z) dan mengubahnya menjadi data palsu/sintetis yang realistis dengan tujuannya yaitu adalah untuk menipu discriminator, enerator belajar dari kesalahan dengan backpropagation, sehingga lama-kelamaan bisa menghasilkan data palsu yang sangat mirip data asli.
+
+![Generator](../Asset/Generator.png)
+
+
+
 - **Discriminator (Si Ahli Forensik)**: Seorang ahli seni dan forensik yang bertugas memeriksa setiap karya seni dan menentukan apakah itu asli atau palsu.
 
 Prosesnya berjalan sebagai berikut:

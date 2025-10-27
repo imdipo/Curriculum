@@ -154,7 +154,7 @@ Ini Max pooling
 ## 2. Aritmetika Konvolusi (Convolution Arithmetic)
 Analisis hubungan antara berbagai properti lapisan konvolusi menjadi lebih mudah karena setiap sumbu (axis) bekerja secara independen — artinya, pemilihan ukuran kernel, stride, dan zero padding pada sumbu ke-$j$ hanya memengaruhi ukuran output pada sumbu tersebut, dan tidak berinteraksi dengan sumbu lain.
 
-## 2.1 Tanpa Zero Padding, dengan Stride = 1
+### 2.1 Tanpa Zero Padding, dengan Stride = 1
 Kasus paling sederhana untuk dianalisis adalah ketika **kernel** melintasi setiap posisi input tanpa *padding* dan tanpa lompatan, yaitu ketika $s = 1$ dan $p = 0$. Gambar 2.1 menunjukkan contohnya untuk $i = 4$ dan $k = 3$. Salah satu cara untuk menentukan **ukuran output** dalam kasus ini adalah dengan menghitung jumlah posisi yang mungkin bagi kernel di atas input, misalnya pada sumbu lebar (*width*).
 
 Kernel mulai dari sisi paling kiri input, lalu bergeser satu langkah demi satu langkah hingga menyentuh sisi kanan. Ukuran output sama dengan jumlah langkah yang dilakukan ditambah satu — karena posisi awal kernel juga dihitung (lihat Gambar 2.8a). Logika yang sama berlaku untuk sumbu tinggi (*height*).  
@@ -170,7 +170,7 @@ $$
 
 ![contoh](../Asset/No-zero-padding,unit-strides.png)
 
-## 2.2 Zero Padding, dengan Stride = 1
+### 2.2 Zero Padding, dengan Stride = 1
 
 Untuk memperhitungkan *zero padding* (dengan tetap membatasi $s = 1$), mari kita lihat efeknya terhadap ukuran *input* efektif:  
 Padding sebesar $p$ di setiap sisi akan mengubah ukuran input efektif dari $i$ menjadi $i + 2p$.
@@ -191,7 +191,7 @@ Dalam praktiknya, terdapat dua jenis *zero padding* yang sering digunakan karena
 
 ---
 
-### 2.2.1 Half (Same) Padding
+#### 2.2.1 Half (Same) Padding
 
 Kadang kita menginginkan agar ukuran *output* sama dengan ukuran *input* (yaitu $o = i$).  
 Kondisi ini bisa dicapai dengan memilih *padding* yang sesuai.
@@ -210,7 +210,7 @@ Gambar 2.3 menunjukkan contohnya untuk $i = 5$, $k = 3$, dan karenanya $p = 1$.
 
 ---
 
-### 2.2.2 Full Padding
+#### 2.2.2 Full Padding
 
 Secara umum, konvolusi dengan kernel akan mengurangi ukuran *output* dibandingkan ukuran *input*.  
 Namun, dalam beberapa kasus, justru diperlukan *output* yang lebih besar dari *input*.  
@@ -228,7 +228,7 @@ Biasanya, konvolusi membuat output lebih kecil dari input, karena kernel tidak b
 Tapi dengan full padding, kita tambahkan nol di sekeliling input agar kernel bisa meliputi semua kemungkinan posisi, termasuk yang hanya menyentuh sebagian area input.
 
 
-🔍 **Intuisi singkat:**
+**Intuisi:**
 
 | Jenis Padding | Rumus Output | Efek |
 |----------------|---------------|-------|
@@ -236,25 +236,62 @@ Tapi dengan full padding, kita tambahkan nol di sekeliling input agar kernel bis
 | Half / Same padding | $o = i$ | Output sama |
 | Full padding | $o = i + k - 1$ | Output membesar |
 
-## 2.3 No zero padding, non-unit strides
+### 2.3 No zero padding, non-unit strides
 Kasus:
 
 $p$ = 0 (tidak ber-padding) dan $s$ > 1 (stride lebih dari 1)
 
 Stride > 1 artinya kernel melompat beberapa piksel sekaligus saat bergerak.
 Jadi, tidak semua posisi input dikunjungi oleh kernel → hasilnya output jadi lebih kecil.
+
+**Hubungan 5**
+
 $$
 o = \left\lfloor \frac{i - k}{s} \right\rfloor + 1
 $$
+![stride](../Asset/No-zero-padding,non-unit-strides.png)
+
 Kenapa kita memakai floor (pembulatan kebawah)? 
 Karena kadang kernel tidak pas berhenti di ujung input. Kalau stride-nya besar, sisa beberapa piksel di ujung bisa tidak ter-cover.
 
-## 2.4 Zero padding, non-unit strides
+### 2.4 Zero padding, non-unit strides
 Kasus:
 
-$p$ > (ber-padding) dan $s$ > 1 (stride lebih dari 1)
+$p$ > 0 dan $s$ > 1 (stride lebih dari 1)
 
+hubungan 5 sudah menangani stride > 1 tetapi tanpa padding, kalau kita ingin menambahkan padding, kita tinggal mengganti ukuran input efektif dari $i$ menjadi $i + 2_p$. Ini adalah trik  yang sama persis dilakukan waktu dari hubungan 1 → hubungan 2 (waktu stride = 1)
+
+**Hubungan 6**
 $$
 o = \left\lfloor \frac{i + 2p - k}{s} \right\rfloor + 1
 $$
 
+![stride](../Asset/Zero-padding,non-unit-strides.png)
+
+Akan tetapi penggunaan fungsi floor dalam rumus dimensi output konvolusi, dan ini hanya berlaku untuk non-unit strides ($s > 1$). Ini merupakan inti dari Ambiguitas Dimensi Output dalam operasi konvolusi pada hubungan 6
+
+![stride](../Asset/Ambiguitas.png)
+
+Lihat kan, ukuran input yang berbeda menghasilkan hasil konvolusinya menjadi ukuran output yang sama
+
+intinya Fungsi floor yang pada dasarnya adalah pembulatan ke bawah. Ia membuang sisa atau pecahan dari hasil pembagian. misalnya nilai awal (pembilang) berbeda ($4$ dan $5$), setelah dibagi 2 dan dibulatkan ke bawah, hasilnya sama (2).
+
+## Chapter 3 Pooling arithmetic
+
+Dalam jaringan saraf, lapisan pooling memberikan invariansi terhadap pergeseran kecil (small translations) pada input. Pooling yang paling sering digunakan adalah max pooling, yaitu, Membagi input menjadi beberapa patch kecil (biasanya tidak saling tumpang tindih / non-overlapping), lalu Mengambil nilai maksimum dari setiap patch untuk menjadi output.
+
+Atau Mean pooling atau average pooling, yang mengambil rata-rata nilai dari patch, bukan maksimum. Intinya Semua jenis pooling ini punya prinsip dasar yang sama, Menggabungkan (meng-aggregate) nilai lokal dari sebagian kecil area input dengan fungsi non-linear tertentu.
+
+semua hubungan matematis (relationship) yang diturunkan untuk konvolusi di bab sebelumnya juga berlaku untuk pooling — kecuali:
+
+Pooling tidak menggunakan zero padding, jadi rumusnya lebih sederhana.
+
+$$
+o = \left\lfloor \frac{i - k}{s} \right\rfloor + 1
+$$
+
+## Chapter 4 Transposed Convolution Arithmetic
+
+Kita butuh Transposed convolution (kadang disebut deconvolution)  karena kita ingin melakukan operasi kebalikan dari konvolusi biasa. bukan secara matematis “inverse”, tapi secara spasial membalik arah transformasi.
+
+# Belom kelar
