@@ -115,9 +115,13 @@ $$J_3 = \begin{pmatrix} 1 & 1 \end{pmatrix}$$
 To find out how much $p$ changes if we move $x$ slightly ($\frac{dp}{dx}$), we multiply them:
 $$\frac{dp}{dx} = J_3 \cdot J_2 \cdot J_1$$
 
-First, multiply $J_3 \cdot J_2$:$$\begin{pmatrix} 1 & 1 \end{pmatrix} \cdot \begin{pmatrix} 1 & 1 \\ 4 & 6 \end{pmatrix} = \begin{pmatrix} (1 \cdot 1 + 1 \cdot 4) & (1 \cdot 1 + 1 \cdot 6) \end{pmatrix} = \begin{pmatrix} 5 & 7 \end{pmatrix}$$
+First, multiply $J_3 \cdot J_2$:
 
-Then, multiply that result by $J_1$:$$\begin{pmatrix} 5 & 7 \end{pmatrix} \cdot \begin{pmatrix} 3 \\ 4 \end{pmatrix} = (5 \cdot 3) + (7 \cdot 4) = 15 + 28 = \mathbf{43}$$
+$$\begin{pmatrix} 1 & 1 \end{pmatrix} \cdot \begin{pmatrix} 1 & 1 \\ 4 & 6 \end{pmatrix} = \begin{pmatrix} (1 \cdot 1 + 1 \cdot 4) & (1 \cdot 1 + 1 \cdot 6) \end{pmatrix} = \begin{pmatrix} 5 & 7 \end{pmatrix}$$
+
+Then, multiply that result by $J_1$:
+
+$$\begin{pmatrix} 5 & 7 \end{pmatrix} \cdot \begin{pmatrix} 3 \\ 4 \end{pmatrix} = (5 \cdot 3) + (7 \cdot 4) = 15 + 28 = \mathbf{43}$$
 
 the point where $x=2$, the total sensitivity of the output to the input is 43. This means if we increase $x$ by a tiny amount (say, 0.01), the final output $p$ will increase by roughly $0.43$ (remember this process doesnt inlude activation like ReLu or Sigmoid). and by the way, if you still dont understand with the conlucsion above. thinking it of like 
 
