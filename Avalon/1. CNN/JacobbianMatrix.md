@@ -97,7 +97,9 @@ Step 1: $J_1$ (Input to A)
 
 $$\frac{\partial a_1}{\partial x} = 3, \quad \frac{\partial a_2}{\partial x} = 2x = 4$$
 
-$$J_1 = \begin{pmatrix} 3 \\ 4 \end{pmatrix}$$
+<p align="center">
+  <img src="1.png" alt="Jacobian Matrix" width="110">
+</p>
 
 Step 2: $J_2$ (A to B)
 
@@ -105,7 +107,9 @@ $$\frac{\partial b_1}{\partial a_1} = 1, \quad \frac{\partial b_1}{\partial a_2}
 
 $$\frac{\partial b_2}{\partial a_1} = a_2 = 4, \quad \frac{\partial b_2}{\partial a_2} = a_1 = 6$$
 
-$$J_2 = \begin{pmatrix} 1 & 1 \\ 4 & 6 \end{pmatrix}$$
+<p align="center">
+  <img src="2.png" alt="Jacobian Matrix" width="120">
+</p>
 
 Step 3: $J_3$ (B to Output $p$)
 
@@ -120,11 +124,15 @@ $$\frac{dp}{dx} = J_3 \cdot J_2 \cdot J_1$$
 
 First, multiply $J_3 \cdot J_2$:
 
-$$\begin{pmatrix} 1 & 1 \end{pmatrix} \cdot \begin{pmatrix} 1 & 1 \\ 4 & 6 \end{pmatrix} = \begin{pmatrix} (1 \cdot 1 + 1 \cdot 4) & (1 \cdot 1 + 1 \cdot 6) \end{pmatrix} = \begin{pmatrix} 5 & 7 \end{pmatrix}$$
+<p align="center">
+  <img src="3.png" alt="Jacobian Matrix" width="450">
+</p>
 
 Then, multiply that result by $J_1$:
 
-$$\begin{pmatrix} 5 & 7 \end{pmatrix} \cdot \begin{pmatrix} 3 \\ 4 \end{pmatrix} = (5 \cdot 3) + (7 \cdot 4) = 15 + 28 = \mathbf{43}$$
+<p align="center">
+  <img src="4.png" alt="Jacobian Matrix" width="400">
+</p>
 
 the point where $x=2$, the total sensitivity of the output to the input is 43. This means if we increase $x$ by a tiny amount (say, 0.01), the final output $p$ will increase by roughly $0.43$ (remember this process doesnt inlude activation like ReLu or Sigmoid). and by the way, if you still dont understand with the conlucsion above. thinking it of like 
 
