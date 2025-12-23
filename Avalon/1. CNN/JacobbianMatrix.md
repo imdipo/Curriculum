@@ -22,16 +22,9 @@ $$f(\mathbf{x}) = \begin{pmatrix} f_1(x_1, x_2) \\ f_2(x_1, x_2) \end{pmatrix} =
 
 here yeah we know, vector $x_1$ dan $x_2$ as an input and output-ed the new vector of like the equation above. this show a 2 dimensional input into 2 dimensional output. Or elegantly, Jacobian Matrix will compute all possible derivatives in a multivariable multifunction system by organizing it into a systematis grid. from equation above, because of we do have 2 functions with 2 variables. we got exactly four partials derivative 
 
-$$J_f = 
-\begin{pmatrix}
-\frac{\partial f_1}{\partial x_1} & \frac{\partial f_1}{\partial x_2} \\
-\frac{\partial f_2}{\partial x_1} & \frac{\partial f_2}{\partial x_2}
-\end{pmatrix}
-=
-\begin{pmatrix}
-2x_1 & 1 \\
-1 & 2x_2
-\end{pmatrix}$$
+<p align="center">
+  <img src="matrix.png" alt="Jacobian Matrix" width="400">
+</p>
 
 all we already know $\frac{\partial f_1}{\partial x_1}$ meant partial derivative from the first function respect to the first variable so the result will be the same position in the output-ed vector. and so on, and so on.
 
