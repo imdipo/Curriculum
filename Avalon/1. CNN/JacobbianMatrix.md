@@ -94,11 +94,13 @@ Before we do the Jacobian, let's see what the actual numbers are at $x=2$:
 let's find the sensitivity at each step using the numbers we just found.
 
 Step 1: $J_1$ (Input to A)
+
 $$\frac{\partial a_1}{\partial x} = 3, \quad \frac{\partial a_2}{\partial x} = 2x = 4$$
 
 $$J_1 = \begin{pmatrix} 3 \\ 4 \end{pmatrix}$$
 
 Step 2: $J_2$ (A to B)
+
 $$\frac{\partial b_1}{\partial a_1} = 1, \quad \frac{\partial b_1}{\partial a_2} = 1$$
 
 $$\frac{\partial b_2}{\partial a_1} = a_2 = 4, \quad \frac{\partial b_2}{\partial a_2} = a_1 = 6$$
@@ -113,6 +115,7 @@ $$J_3 = \begin{pmatrix} 1 & 1 \end{pmatrix}$$
 
 4. Matrix Multiplication
 To find out how much $p$ changes if we move $x$ slightly ($\frac{dp}{dx}$), we multiply them:
+
 $$\frac{dp}{dx} = J_3 \cdot J_2 \cdot J_1$$
 
 First, multiply $J_3 \cdot J_2$:
@@ -132,6 +135,7 @@ So...
 When we calculated that the Jacobian result is 43 at $x=2$: The value 43 is not the "Speed." It’s how fast the output $p$ is growing compared to $x$ at that specific moment. The value $x=2$ is just "Where we are" on the map.
 
 The "Linear Approximation" In calculus, the derivative $\frac{dp}{dx}$ tells us that for a very small change in $x$ (let's call it $\Delta x$), the change in $p$ ($\Delta p$) is roughly:
+
 $$\Delta p \approx \frac{dp}{dx} \cdot \Delta x$$
 
 So, using our numbers:
