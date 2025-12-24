@@ -23,7 +23,7 @@ $$f(\mathbf{x}) = \begin{pmatrix} f_1(x_1, x_2) \\ f_2(x_1, x_2) \end{pmatrix} =
 here yeah we know, vector $x_1$ dan $x_2$ as an input and output-ed the new vector of like the equation above. this show a 2 dimensional input into 2 dimensional output. Or elegantly, Jacobian Matrix will compute all possible derivatives in a multivariable multifunction system by organizing it into a systematis grid. from equation above, because of we do have 2 functions with 2 variables. we got exactly four partials derivative 
 
 <p align="center">
-  <img src="matrix.png" alt="Jacobian Matrix" width="400">
+  <img src="Asset/matrix.png" alt="Jacobian Matrix" width="400">
 </p>
 
 all we already know $\frac{\partial f_1}{\partial x_1}$ meant partial derivative from the first function respect to the first variable so the result will be the same position in the output-ed vector. and so on, and so on.
@@ -33,7 +33,7 @@ This four derivatives build a 2x2 matrix and this what we called "Jacobian Matri
 ## The Application (Computing Gradient Efficiently)
 the use of this will shown, when we implemented it in neural-network training where the computational of the gradien become so important. 
 
-![contoh](ContohNeuralNetwork.png)
+![contoh](Asset/ContohNeuralNetwork.png)
 
 we are gonna use simple neural network, where input $x$ and will one output $p$. and inside there will be hidden layer with neuron inside ofc. If we want to find the gradient of the output $p$ with respect to the input $x$ ($\frac{dp}{dx}$), we just chain these Jacobians together.
 
@@ -72,7 +72,7 @@ The dimensions even work out as good as it is: $(1 \times 2) \cdot (2 \times 2) 
 # Contoh
 assume we have a specific input and specific weights. We'll simplify the "functions" inside the neurons to be simple linear combinations (no non-linear activation for now, just to keep the math clean)
 
-![contoh](Contohnya.png)
+![contoh](Asset/Contohnya.png)
 
 1. All we know
 - Input: $x = 2$
@@ -98,7 +98,7 @@ Step 1: $J_1$ (Input to A)
 $$\frac{\partial a_1}{\partial x} = 3, \quad \frac{\partial a_2}{\partial x} = 2x = 4$$
 
 <p align="center">
-  <img src="1.png" alt="Jacobian Matrix" width="110">
+  <img src="Asset/1.png" alt="Jacobian Matrix" width="110">
 </p>
 
 Step 2: $J_2$ (A to B)
@@ -108,7 +108,7 @@ $$\frac{\partial b_1}{\partial a_1} = 1, \quad \frac{\partial b_1}{\partial a_2}
 $$\frac{\partial b_2}{\partial a_1} = a_2 = 4, \quad \frac{\partial b_2}{\partial a_2} = a_1 = 6$$
 
 <p align="center">
-  <img src="2.png" alt="Jacobian Matrix" width="120">
+  <img src="Asset/2.png" alt="Jacobian Matrix" width="120">
 </p>
 
 Step 3: $J_3$ (B to Output $p$)
@@ -125,13 +125,13 @@ $$\frac{dp}{dx} = J_3 \cdot J_2 \cdot J_1$$
 First, multiply $J_3 \cdot J_2$:
 
 <p align="center">
-  <img src="3.png" alt="Jacobian Matrix" width="450">
+  <img src="Asset/3.png" alt="Jacobian Matrix" width="450">
 </p>
 
 Then, multiply that result by $J_1$:
 
 <p align="center">
-  <img src="4.png" alt="Jacobian Matrix" width="400">
+  <img src="Asset/4.png" alt="Jacobian Matrix" width="400">
 </p>
 
 the point where $x=2$, the total sensitivity of the output to the input is 43. This means if we increase $x$ by a tiny amount (say, 0.01), the final output $p$ will increase by roughly $0.43$ (remember this process doesnt inlude activation like ReLu or Sigmoid). and by the way, if you still dont understand with the conlucsion above. thinking it of like 
