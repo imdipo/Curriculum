@@ -156,7 +156,7 @@ $$
 b_{new} = b_{old} - \eta \cdot \delta_{target}
 $$
 
-
+![Backward](Asset/Backward.png)
 
 
 
