@@ -33,6 +33,8 @@ And for this section, I would like to express my gratitude to people who helped 
 
 <li> <a href="https://id.wikipedia.org/wiki/Geoffrey_Hinton">Geoffrey Hinton</a>, for the paper "Reducing the Dimensionality of Data with Neural Networks"
 
+<li> <a href="https://dpkingma.com/">D.P. Kingma</a>, for the paper "Auto-Encoding Variational Bayes"
+
 <li> <a href="https://www.youtube.com/@3blue1brown"> 3blue1brown</a> for many of the videos i watched
 
 <li> <a href="https://www.youtube.com/@Deepia-ls2fo">Deepia</a> for many of the videos i watched
